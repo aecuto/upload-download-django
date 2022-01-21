@@ -1,3 +1,13 @@
 from django.db import models
+from django.urls import reverse
 
-# Create your models here.
+
+class Upload(models.Model):
+    password = models.CharField(max_length=255, blank=True, null=True)
+    max_downloads = models.IntegerField()
+    expire_date = models.DateTimeField()
+    # TODO: Add more fields if needed
+
+    def get_absolute_url(self):
+        return reverse("download", args=(self.id,))
+
