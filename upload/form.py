@@ -26,7 +26,10 @@ class UploadForm(forms.ModelForm):
 
     class Meta:
         model = Upload
-        fields = ["password", "max_downloads"]
+        fields = ["file", "max_downloads", "expire_duration","password"]
         widgets = {
             "password": forms.PasswordInput(),
+        }
+        help_texts = {
+            "password": "(optional)",
         }

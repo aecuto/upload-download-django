@@ -7,11 +7,8 @@ BASE_FILE_PATH = 'files'
 def uniq_id(size=6, chars=string.ascii_uppercase + string.digits):
      return ''.join(random.choice(chars) for _ in range(size))
 
-def get_file_name(file_name):
-    return uniq_id() + '-' + file_name
-
 def handle_uploaded_file(f):
-    filename = get_file_name(f.name)
+    filename = uniq_id() + '-' + f.name
     path = os.path.join(BASE_FILE_PATH,filename)
 
     if not os.path.exists(os.path.dirname(path)):
