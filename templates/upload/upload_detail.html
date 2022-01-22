@@ -10,8 +10,10 @@
 	<p><input type="submit" value="Download"></p>
 </form>
 
+{% if user.id == object.user.id %}
 <p>Download Url: <a href={{download_url}}>{{download_url}}</a></p>
 <p>Delete Url: <a href={{delete_url}}>{{delete_url}}</a></p>
+{% endif %}
 
 {% endblock %}
 

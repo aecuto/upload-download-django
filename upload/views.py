@@ -15,9 +15,6 @@ from django.urls import reverse
 
 utc=pytz.UTC
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
-
 class UploadPage(CreateView):
     model = Upload
     form_class = UploadForm
@@ -38,6 +35,7 @@ class UploadPage(CreateView):
         form.instance.expire_date = datetime.now() + timedelta(seconds=int(duration))
         form.instance.file_name = file.name
         form.instance.upload_path = get_upload_path(upload_file_name)
+        form.instance.user = self.request.user
 
         return super().form_valid(form)
 
@@ -47,15 +45,11 @@ class Download(DetailView):
     # TODO:
     # Make it so that you can't download expired files
 
-    # def get(self, *args, **kwargs):
-    #     return self
 
     def get_context_data(self, *args, **kwargs):
         self.object = self.get_object()
 
         context = super().get_context_data(*args, **kwargs)
-        # add extra field 
-
         download_url = self.request.build_absolute_uri(reverse("download", args=(self.object.id,)))
         delete_url = self.request.build_absolute_uri(reverse("delete", args=(self.object.id,)))
         context["download_url"] = download_url

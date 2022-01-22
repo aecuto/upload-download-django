@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 
 class Upload(models.Model):
@@ -8,6 +9,7 @@ class Upload(models.Model):
     expire_date = models.DateTimeField()
     file_name = models.CharField(max_length=255, blank=True, null=True)
     upload_path = models.CharField(max_length=255, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def get_absolute_url(self):
         return reverse("download", args=(self.id,))

@@ -3,10 +3,18 @@
 <head>
 	<meta charset="UTF-8">
 	<title>{% block title %}Send{% endblock %}</title>
+  <style>
+    html {
+      max-width: 70ch;
+      padding: 3em 1em;
+      margin: auto;
+      line-height: 1.75;
+      font-size: 1.25em;
+    }
+  </style>
 </head>
 <body>
 {% block body %}{% endblock %}
-
 
 <p>------------------------</p>
 
@@ -19,3 +27,4 @@
 {% endif %}
 </body>
 </html>
+
