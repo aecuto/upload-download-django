@@ -52,18 +52,19 @@ class Download(DetailView):
         self.object = self.get_object()
 
         if self.object.password is not None:
-            if self.request.POST.get("password") != "password":
-                handle_delete_file(self.object.upload_path)
+            if self.request.POST.get("password") != self.object.password:
                 return HttpResponse("invalid password")
 
         if datetime.now(utc) > self.object.expire_date:
             handle_delete_file(self.object.upload_path)
+            self.object.delete()
             return HttpResponse("file expiry")
 
         count_download = DownloadModel.objects.filter(upload_id=self.object.id).count()
 
         if count_download >= self.object.max_downloads:
             handle_delete_file(self.object.upload_path)
+            self.object.delete()
             return HttpResponse("reached the file's maximum number of downloads")
 
         download = DownloadModel(date=datetime.now(), upload=self.object)
