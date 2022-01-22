@@ -1,13 +1,14 @@
 
 from datetime import datetime, timedelta
+import os
 from django.views.generic import CreateView, DetailView
 
 from django.http import HttpResponse
 
+from upload.utils import handle_uploaded_file
+
 from .form import UploadForm
 from .models import Upload
-
-from django.urls import reverse_lazy
 
 
 def index(request):
@@ -24,7 +25,12 @@ class UploadPage(CreateView):
     def form_valid(self, form):
         duration = self.request.POST.get('expire_duration')
         form.instance.expire_date = datetime.now() + timedelta(seconds=int(duration))
+
+        file = self.request.FILES['file']
+        handle_uploaded_file(file)
+
         return super().form_valid(form)
+
 
 class Download(DetailView):
     model = Upload
