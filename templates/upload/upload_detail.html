@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
-<h1>{{ object.file_name }} goes here</h1>
+<h1>{{ object.file_name }}</h1>
 
 <form action="{% url 'download' object.id %}" method="POST">
 {% if object.password %}
