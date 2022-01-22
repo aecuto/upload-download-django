@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
-<h1>file goes here</h1>
+<h1>{{ object.file_name }} goes here</h1>
 
 <form action="{% url 'download' object.id %}" method="POST">
 {% if object.password %}
@@ -9,4 +9,9 @@
 	{% csrf_token %}
 	<p><input type="submit" value="Download"></p>
 </form>
+
+<p>Download Url: <a href={{download_url}}>{{download_url}}</a></p>
+<p>Delete Url: <a href={{delete_url}}>{{delete_url}}</a></p>
+
 {% endblock %}
+

@@ -1,8 +1,7 @@
 
 from datetime import datetime, timedelta
 
-from telnetlib import DO
-from django.forms import ValidationError
+
 from django.views.generic import CreateView, DetailView
 
 from django.http import FileResponse, HttpResponse
@@ -12,6 +11,7 @@ from upload.utils import get_upload_path, handle_delete_file, handle_uploaded_fi
 
 from .form import UploadForm
 from .models import Upload, Download as DownloadModel
+from django.urls import reverse
 
 utc=pytz.UTC
 
@@ -44,9 +44,23 @@ class UploadPage(CreateView):
 
 class Download(DetailView):
     model = Upload
-
     # TODO:
     # Make it so that you can't download expired files
+
+    # def get(self, *args, **kwargs):
+    #     return self
+
+    def get_context_data(self, *args, **kwargs):
+        self.object = self.get_object()
+
+        context = super().get_context_data(*args, **kwargs)
+        # add extra field 
+
+        download_url = self.request.build_absolute_uri(reverse("download", args=(self.object.id,)))
+        delete_url = self.request.build_absolute_uri(reverse("delete", args=(self.object.id,)))
+        context["download_url"] = download_url
+        context["delete_url"] = delete_url
+        return context
 
     def post(self, *args, **kwargs):
         self.object = self.get_object()
