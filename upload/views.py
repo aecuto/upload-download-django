@@ -29,10 +29,10 @@ class UploadPage(CreateView):
         duration = self.request.POST.get('expire_duration')
         file = self.request.FILES['file']
 
-        upload_path = handle_uploaded_file(file)
+        handle_uploaded_file(file)
 
         form.instance.expire_date = datetime.now() + timedelta(seconds=int(duration))
-        form.instance.upload_path = upload_path
+        form.instance.file_name = file.name
 
         return super().form_valid(form)
 
@@ -61,7 +61,9 @@ class Download(DetailView):
         download = DownloadModel(date=datetime.now(), upload=self.object)
         download.save()
 
-        return FileResponse(open(self.object.upload_path, 'rb'))
+        upload_path = 'files/'+self.object.file_name
+
+        return FileResponse(open(upload_path, 'rb'))
 
         # TODO:
         # 1) Delete file when max_downloads is done
