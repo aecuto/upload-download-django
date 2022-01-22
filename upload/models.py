@@ -7,6 +7,7 @@ class Upload(models.Model):
     max_downloads = models.IntegerField()
     expire_date = models.DateTimeField()
     file_name = models.CharField(max_length=255, blank=True, null=True)
+    upload_path = models.CharField(max_length=255, blank=True, null=True)
 
     def get_absolute_url(self):
         return reverse("download", args=(self.id,))

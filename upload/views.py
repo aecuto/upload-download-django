@@ -1,13 +1,13 @@
 
 from datetime import datetime, timedelta
-import os
+
 from telnetlib import DO
 from django.views.generic import CreateView, DetailView
 
 from django.http import FileResponse, HttpResponse
 import pytz
 
-from upload.utils import handle_uploaded_file
+from upload.utils import get_upload_path, handle_delete_file, handle_uploaded_file
 
 from .form import UploadForm
 from .models import Upload, Download as DownloadModel
@@ -29,10 +29,11 @@ class UploadPage(CreateView):
         duration = self.request.POST.get('expire_duration')
         file = self.request.FILES['file']
 
-        handle_uploaded_file(file)
+        upload_file_name = handle_uploaded_file(file)
 
         form.instance.expire_date = datetime.now() + timedelta(seconds=int(duration))
         form.instance.file_name = file.name
+        form.instance.upload_path = get_upload_path(upload_file_name)
 
         return super().form_valid(form)
 
@@ -46,24 +47,25 @@ class Download(DetailView):
     def post(self, *args, **kwargs):
         self.object = self.get_object()
 
-        if datetime.now(utc) > self.object.expire_date:
-            return HttpResponse("file expiry")
-
         if self.object.password is not None:
             if self.request.POST.get("password") != "password":
+                handle_delete_file(self.object.upload_path)
                 return HttpResponse("invalid password")
+
+        if datetime.now(utc) > self.object.expire_date:
+            handle_delete_file(self.object.upload_path)
+            return HttpResponse("file expiry")
 
         count_download = DownloadModel.objects.filter(upload_id=self.object.id).count()
 
         if count_download >= self.object.max_downloads:
+            handle_delete_file(self.object.upload_path)
             return HttpResponse("reached the file's maximum number of downloads")
 
         download = DownloadModel(date=datetime.now(), upload=self.object)
         download.save()
 
-        upload_path = 'files/'+self.object.file_name
-
-        return FileResponse(open(upload_path, 'rb'))
+        return FileResponse(open(self.object.upload_path, 'rb'),filename=self.object.file_name)
 
         # TODO:
         # 1) Delete file when max_downloads is done
@@ -77,6 +79,6 @@ class Delete(DetailView):
 
     def post(self, *args, **kwargs):
         self.object = self.get_object()
-        # TODO: Actually delete fil
+        handle_delete_file(self.object.upload_path)
         self.object.delete()
         return HttpResponse("Deleted!")
