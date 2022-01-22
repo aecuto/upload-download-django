@@ -29,3 +29,11 @@ def handle_delete_file(path):
 
 def get_upload_path(file_name):
     return os.path.join(BASE_FILE_PATH,file_name)
+
+def validate_file_size(file):
+    filesize= file.size
+    # 100MB - 104857600
+    if filesize > 104857600:
+        return True
+    else:
+        return False

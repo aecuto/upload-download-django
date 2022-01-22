@@ -2,12 +2,13 @@
 from datetime import datetime, timedelta
 
 from telnetlib import DO
+from django.forms import ValidationError
 from django.views.generic import CreateView, DetailView
 
 from django.http import FileResponse, HttpResponse
 import pytz
 
-from upload.utils import get_upload_path, handle_delete_file, handle_uploaded_file
+from upload.utils import get_upload_path, handle_delete_file, handle_uploaded_file, validate_file_size
 
 from .form import UploadForm
 from .models import Upload, Download as DownloadModel
@@ -28,6 +29,9 @@ class UploadPage(CreateView):
     def form_valid(self, form):
         duration = self.request.POST.get('expire_duration')
         file = self.request.FILES['file']
+
+        if validate_file_size(file):
+            return HttpResponse("The maximum file size that can be uploaded is 100MB")
 
         upload_file_name = handle_uploaded_file(file)
 
