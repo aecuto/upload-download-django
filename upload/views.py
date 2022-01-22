@@ -1,5 +1,5 @@
 
-from datetime import date
+from datetime import datetime, timedelta
 from django.views.generic import CreateView, DetailView
 
 from django.http import HttpResponse
@@ -17,26 +17,14 @@ class UploadPage(CreateView):
     model = Upload
     form_class = UploadForm
     # TODO:
-    # 1) Convert expire_duration to expire_date
-    # 2) Upload and save
-    # 3) Generate download and delete link
+    # 1) Convert expire_duration to expire_date x
+    # 2) Upload and save 
+    # 3) Generate download and delete link 
+
     def form_valid(self, form):
-        form.instance.expire_date = date.today()
+        duration = self.request.POST.get('expire_duration')
+        form.instance.expire_date = datetime.now() + timedelta(seconds=int(duration))
         return super().form_valid(form)
-#     new_form = UploadForm(request.POST)
-
-# # Create, but don't save the new author instance.
-# >>> new_author = f.save(commit=False)
-
-# # Modify the author in some way.
-# >>> new_author.some_field = 'some_value'
-
-# # Save the new instance.
-# >>> new_author.save()
-
-# # Now, save the many-to-many data for the form.
-# >>> f.save_m2m()
-
 
 class Download(DetailView):
     model = Upload
