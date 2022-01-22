@@ -1,3 +1,2 @@
 files
-send/__pycache__
-upload/__pycache__
+*__pycache__
