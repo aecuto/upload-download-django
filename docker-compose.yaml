@@ -8,6 +8,5 @@ services:
       DATABASE_URL: sqlite:///database/db.sqlite3
     ports:
       - 8080:8080
-      - 8000:8000
     volumes:
       - ./database:/app/database
