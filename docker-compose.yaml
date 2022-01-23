@@ -4,9 +4,8 @@ services:
     build: .
     environment: 
       ALLOWED_HOSTS: send,localhost
-      DATABASE_URL: sqlite:////database/db.sqlite3
       SECRET_KEY: "zlk5yl*t+duw^*a2dj%kv3v5g-hpo-38+c(safh2nvzpxu3c2o"
-      DEBUG: true
+      DATABASE_URL: sqlite:////database/db.sqlite3
     ports:
       - 8080:8080
     volumes:

@@ -10,5 +10,5 @@ RUN poetry install --no-dev --no-interaction \
 	&& python manage.py collectstatic --no-input
 
 USER 1000
-RUN  python manage.py runserver
-# CMD ["gunicorn", "--access-logfile", "-", "--error-logfile", "-", "-b", "0.0.0.0:8080", "-t", "300", "--threads", "16", "send.wsgi:application"]
+
+CMD ["gunicorn", "--access-logfile", "-", "--error-logfile", "-", "-b", "0.0.0.0:8080", "-t", "300", "--threads", "16", "send.wsgi:application"]
