@@ -34,10 +34,7 @@ DEBUG = env.bool("DEBUG", default=True)
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
-
-
 # Application definition
-
 INSTALLED_APPS = [
     'upload.apps.UploadConfig',
     'accounts.apps.AccountsConfig',
@@ -88,13 +85,8 @@ WSGI_APPLICATION = 'send.wsgi.application'
 
 
 DATABASES = {
-    # read os.environ['DATABASE_URL'] and raises
-    # ImproperlyConfigured exception if not found
-    #
-    # The db() method is an alias for db_url().
-    'default': env.db(),
+    "default": env.db(default="sqlite:///" + os.path.join(BASE_DIR, "db.sqlite3")),
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

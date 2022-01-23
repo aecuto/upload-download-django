@@ -1,4 +1,5 @@
 FROM python:3.8
+RUN apt update
 RUN useradd -u 1000 -d /app -M -s /bin/false app \
 	&& pip install poetry gunicorn
 ENV POETRY_VIRTUALENVS_CREATE=false
@@ -8,6 +9,8 @@ COPY . /app/
 WORKDIR /app/
 RUN poetry install --no-dev --no-interaction \
 	&& python manage.py collectstatic --no-input
+
+RUN mkdir files && chown 1000:1000 files
 
 USER 1000
 

@@ -1,5 +1,5 @@
 files
 *__pycache__
-database
 static
 .env
+database
