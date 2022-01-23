@@ -1,17 +1,16 @@
 
-from datetime import datetime, timedelta
-
-
 from django.views.generic import CreateView, DetailView
-
+from django.contrib.auth.hashers import make_password, check_password
 from django.http import FileResponse, HttpResponse
-import pytz
+from django.urls import reverse
 
-from upload.utils import get_upload_path, handle_delete_file, handle_uploaded_file, validate_file_size
+import pytz
+from datetime import datetime, timedelta
 
 from .form import UploadForm
 from .models import Upload, Download as DownloadModel
-from django.urls import reverse
+from upload.utils import get_upload_path, handle_delete_file, handle_uploaded_file, validate_file_size
+
 
 utc=pytz.UTC
 
@@ -24,8 +23,10 @@ class UploadPage(CreateView):
     # 3) Generate download and delete link 
 
     def form_valid(self, form):
-        duration = self.request.POST.get('expire_duration')
         file = self.request.FILES['file']
+        duration = self.request.POST.get('expire_duration')
+        password = self.request.POST.get('password')
+
 
         if validate_file_size(file):
             return HttpResponse("The maximum file size that can be uploaded is 100MB")
@@ -36,6 +37,7 @@ class UploadPage(CreateView):
         form.instance.file_name = file.name
         form.instance.upload_path = get_upload_path(upload_file_name)
         form.instance.user = self.request.user
+        form.instance.password = make_password(password)
 
         return super().form_valid(form)
 
@@ -60,7 +62,8 @@ class Download(DetailView):
         self.object = self.get_object()
 
         if self.object.password is not None:
-            if self.request.POST.get("password") != self.object.password:
+            password = self.request.POST.get("password")
+            if not check_password(password,self.object.password):
                 return HttpResponse("invalid password")
 
         if datetime.now(utc) > self.object.expire_date:
