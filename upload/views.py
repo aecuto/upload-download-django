@@ -1,8 +1,10 @@
 
+from django.utils import timezone
 from django.views.generic import CreateView, DetailView
 from django.contrib.auth.hashers import make_password, check_password
-from django.http import FileResponse, HttpResponse, HttpResponseNotFound
+from django.http import FileResponse, HttpResponse
 from django.urls import reverse
+from django.utils import timezone
 
 import pytz
 from datetime import datetime, timedelta
@@ -22,13 +24,12 @@ class UploadPage(CreateView):
         duration = self.request.POST.get('expire_duration')
         password = self.request.POST.get('password')
 
-
         if validate_file_size(file):
             return HttpResponse("The maximum file size that can be uploaded is 100MB")
 
         upload_path = handle_uploaded_file(file)
 
-        form.instance.expire_date = datetime.now() + timedelta(seconds=int(duration))
+        form.instance.expire_date = timezone.now() + timedelta(seconds=int(duration))
         form.instance.file_name = file.name
         form.instance.upload_path = upload_path
         form.instance.user = self.request.user
@@ -43,7 +44,7 @@ class Download(DetailView):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        if datetime.now(pytz.UTC) > self.object.expire_date:
+        if timezone.now() > self.object.expire_date:
             handle_delete_file(self.object.upload_path)
             self.object.delete()
             return HttpResponse("File Expiry Dates and auto delete.")
@@ -77,16 +78,10 @@ class Download(DetailView):
             self.object.delete()
             return HttpResponse("reached the file's maximum number of downloads")
 
-        download = DownloadModel(date=datetime.now(), upload=self.object)
+        download = DownloadModel(date=timezone.now(), upload=self.object)
         download.save()
 
         return FileResponse(open(self.object.upload_path, 'rb'),filename=self.object.file_name)
-
-        # TODO:
-        # 1) Delete file when max_downloads is done
-        # 2) Verify password securely
-        # 3) Actually send the download
-
 
 class Delete(DetailView):
     model = Upload
