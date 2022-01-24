@@ -6,6 +6,7 @@ import schedule
 from django.core.management import call_command
 
 def run_continuously(interval=1):
+    print("start background jobs service.")
     cease_continuous_run = threading.Event()
 
     class ScheduleThread(threading.Thread):
@@ -24,5 +25,6 @@ def run_continuously(interval=1):
 def background_job():
     call_command("remove_expired_files")
 
-schedule.every(5).minutes.do(background_job)
+schedule.every(2).minutes.do(background_job)
+# schedule.every().second.do(background_job)
 

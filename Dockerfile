@@ -11,6 +11,7 @@ RUN poetry install --no-dev --no-interaction \
 	&& python manage.py collectstatic --no-input
 
 RUN mkdir files && chown 1000:1000 files
+RUN mkdir database && chown 1000:1000 database
 
 USER 1000
 
