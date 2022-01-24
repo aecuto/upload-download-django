@@ -24,5 +24,5 @@ def run_continuously(interval=1):
 def background_job():
     call_command("remove_expired_files")
 
-schedule.every(2).minutes.do(background_job)
+schedule.every(5).minutes.do(background_job)
 

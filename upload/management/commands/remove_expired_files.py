@@ -9,7 +9,6 @@ class Command(BaseCommand):
     help = 'Remove expired files'
 
     def handle(self, *args, **options):
-        print(timezone.now())
         list = Upload.objects.filter(expire_date__lte=timezone.now())
         for upload in list:
             print(f"auto delete: removed file {upload.file_name} (id={upload.id})") 
