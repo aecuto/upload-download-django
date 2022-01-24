@@ -15,6 +15,4 @@ RUN mkdir database && chown 1000:1000 database
 
 USER 1000
 
-RUN python manage.py migrate
-
 CMD ["gunicorn", "--access-logfile", "-", "--error-logfile", "-", "-b", "0.0.0.0:8080", "-t", "300", "--threads", "16", "send.wsgi:application"]

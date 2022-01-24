@@ -6,7 +6,6 @@ import schedule
 from django.core.management import call_command
 
 def run_continuously(interval=1):
-    print("start background jobs service.")
     cease_continuous_run = threading.Event()
 
     class ScheduleThread(threading.Thread):
