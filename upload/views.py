@@ -6,7 +6,6 @@ from django.http import FileResponse, HttpResponse
 from django.urls import reverse
 from django.utils import timezone
 
-import pytz
 from datetime import datetime, timedelta
 
 from .form import UploadForm
