@@ -32,7 +32,7 @@
             <td>{{ forloop.counter }}</td>
             <td>{{ upload.file_name }}</td>
             <td>{{upload.download_set.count}}/{{ upload.max_downloads }}</td>
-            <td>{{ upload.expire_date|date:'Y-m-d H:i' }}</td>
+            <td>{{ upload.expire_date|date:'d-M-Y H:i:s' }}</td>
             <td><a href="{% url 'download' upload.id %}">download</a></td>
             <td><a href="{% url 'delete' upload.id %}">delete</a></td>
         <tr>

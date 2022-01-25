@@ -16,7 +16,7 @@
   <body>
 
   {% if user.is_authenticated %}
-    Hi {{ user.username }}!
+    <p> Hi {{ user.username }}!</p>
     <a href="{% url 'upload' %}">upload page</a> | 
     <a href="{% url 'upload_list' %}">upload list</a> | 
     <a href="{% url 'logout' %}">Log Out</a>
