@@ -3,7 +3,7 @@
  - upload file (auth)
  - download file (with link)
  - delete file (auth)
- - auto delete expire file
+ - auto delete expire file every 2 minutes
 
 
 ## Setup
