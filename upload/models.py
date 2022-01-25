@@ -13,10 +13,16 @@ class Upload(models.Model):
     upload_path = models.CharField(max_length=255, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def get_absolute_url(self):
         return reverse("download", args=(self.id,))
 
 class Download(models.Model):
     date = models.DateTimeField()
     upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 

@@ -17,6 +17,13 @@ class UploadList(ListView):
     model = Upload
     paginate_by = 10
 
+    def get_queryset(self):
+        print(self.request.user.id)
+        new_context = Upload.objects.filter(
+            user_id=self.request.user.id,
+        )
+        return new_context
+
 class UploadPage(CreateView):
     model = Upload
     form_class = UploadForm
