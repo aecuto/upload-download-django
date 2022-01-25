@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block body %}
+
+<style>
+    table, td, th {
+      border: 1px solid black;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+    }
+</style>
+
+<h1>Upload list</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>file name</th>
+            <th>downloaded</th>
+            <th>expire in</th>
+            <th>download link</th>
+            <th>delete link</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for upload in object_list %}
+        <tr>
+            <td>{{ upload.file_name }}</td>
+            <td>{{upload.download_set.count}}/{{ upload.max_downloads }}</td>
+            <td>{{ upload.expire_date|date:'Y-m-d H:i' }}</td>
+            <td><a href="{% url 'download' upload.id %}">download</a></td>
+            <td><a href="{% url 'delete' upload.id %}">delete</a></td>
+        <tr>
+        {% empty %}
+        <tr>
+        <td colspan="5">No data yet.</td>
+        </tr>
+
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock %}

@@ -1,18 +1,21 @@
 
 from django.utils import timezone
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, ListView
 from django.contrib.auth.hashers import make_password, check_password
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse, HttpResponse, HttpResponseBadRequest
 from django.urls import reverse
 from django.utils import timezone
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from .form import UploadForm
 from .models import Upload, Download as DownloadModel
 from upload.utils import handle_delete_file, handle_uploaded_file, validate_file_size
 
 
+class UploadList(ListView):
+    model = Upload
+    paginate_by = 10
 
 class UploadPage(CreateView):
     model = Upload
@@ -24,7 +27,7 @@ class UploadPage(CreateView):
         password = self.request.POST.get('password')
 
         if validate_file_size(file):
-            return HttpResponse("The maximum file size that can be uploaded is 100MB")
+            return HttpResponseBadRequest("The maximum file size that can be uploaded is 100MB")
 
         upload_path = handle_uploaded_file(file)
 
@@ -46,7 +49,7 @@ class Download(DetailView):
         if timezone.now() > self.object.expire_date:
             handle_delete_file(self.object.upload_path)
             self.object.delete()
-            return HttpResponse("File Expiry Dates and auto delete.")
+            return HttpResponseBadRequest("File Expiry Dates and auto delete.")
 
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
@@ -68,14 +71,14 @@ class Download(DetailView):
         if self.object.password is not None:
             password = self.request.POST.get("password")
             if not check_password(password,self.object.password):
-                return HttpResponse("invalid password")
+                return HttpResponseBadRequest("invalid password")
 
         count_download = DownloadModel.objects.filter(upload_id=self.object.id).count()
 
         if count_download >= self.object.max_downloads:
             handle_delete_file(self.object.upload_path)
             self.object.delete()
-            return HttpResponse("reached the file's maximum number of downloads")
+            return HttpResponseBadRequest("reached the file's maximum number of downloads")
 
         download = DownloadModel(date=timezone.now(), upload=self.object)
         download.save()
@@ -85,6 +88,15 @@ class Download(DetailView):
 class Delete(DetailView):
     model = Upload
     template_name = "upload/delete.html"
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        if(self.object.user_id != self.request.user.id):
+            return HttpResponseBadRequest(f"You not owner this file!")
+
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
     def post(self, *args, **kwargs):
         self.object = self.get_object()

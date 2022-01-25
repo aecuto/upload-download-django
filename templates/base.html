@@ -13,18 +13,21 @@
     }
   </style>
 </head>
-<body>
-{% block body %}{% endblock %}
+  <body>
 
-<p>------------------------</p>
+  {% if user.is_authenticated %}
+    Hi {{ user.username }}!
+    <a href="{% url 'upload' %}">upload page</a> | 
+    <a href="{% url 'upload_list' %}">upload list</a> | 
+    <a href="{% url 'logout' %}">Log Out</a>
+  {% else %}
+    You are not logged in <a href="{% url 'login' %}">Log In</a>
+  {% endif %}
 
-{% if user.is_authenticated %}
-  Hi {{ user.username }}!
-  <p><a href="{% url 'logout' %}">Log Out</a></p>
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">Log In</a>
-{% endif %}
-</body>
+  <p>------------------------</p>
+
+  {% block body %}{% endblock %}
+
+  </body>
 </html>
 
