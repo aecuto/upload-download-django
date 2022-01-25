@@ -9,7 +9,7 @@ from django.utils import timezone
 from datetime import timedelta
 
 from .form import UploadForm
-from .models import Upload, Download as DownloadModel
+from .models import Upload
 from upload.utils import handle_delete_file, handle_uploaded_file
 
 
@@ -28,6 +28,7 @@ class UploadPage(CreateView):
     form_class = UploadForm
 
     def form_valid(self, form):
+
         file = self.request.FILES['file']
         duration = self.request.POST.get('expire_duration')
         password = self.request.POST.get('password')
@@ -38,7 +39,7 @@ class UploadPage(CreateView):
         form.instance.file_name = file.name
         form.instance.upload_path = upload_path
         form.instance.user = self.request.user
-        form.instance.password = make_password(password)
+        form.instance.password = make_password(password) if password else None
 
         return super().form_valid(form)
 
@@ -76,15 +77,12 @@ class Download(DetailView):
             if not check_password(password,self.object.password):
                 return HttpResponseBadRequest("invalid password")
 
-        count_download = DownloadModel.objects.filter(upload_id=self.object.id).count()
-
-        if count_download >= self.object.max_downloads:
+        if self.object.download_set.count() >= self.object.max_downloads:
             handle_delete_file(self.object.upload_path)
             self.object.delete()
             return HttpResponseBadRequest("reached the file's maximum number of downloads")
 
-        download = DownloadModel(date=timezone.now(), upload=self.object)
-        download.save()
+        self.object.download_set.create(date=timezone.now(), upload=self.object)
 
         return FileResponse(open(self.object.upload_path, 'rb'),filename=self.object.file_name)
 
