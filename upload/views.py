@@ -10,7 +10,7 @@ from datetime import timedelta
 
 from .form import UploadForm
 from .models import Upload, Download as DownloadModel
-from upload.utils import handle_delete_file, handle_uploaded_file, validate_file_size
+from upload.utils import handle_delete_file, handle_uploaded_file
 
 
 class UploadList(ListView):
@@ -18,10 +18,9 @@ class UploadList(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        print(self.request.user.id)
         new_context = Upload.objects.filter(
             user_id=self.request.user.id,
-        )
+        ).order_by("-created_at")
         return new_context
 
 class UploadPage(CreateView):
@@ -32,9 +31,6 @@ class UploadPage(CreateView):
         file = self.request.FILES['file']
         duration = self.request.POST.get('expire_duration')
         password = self.request.POST.get('password')
-
-        if validate_file_size(file):
-            return HttpResponseBadRequest("The maximum file size that can be uploaded is 100MB")
 
         upload_path = handle_uploaded_file(file)
 

@@ -4,9 +4,6 @@
 <form action="/" method="POST" enctype="multipart/form-data">
   {{ form.as_p }}
 
-	<!-- <p>{{form.file}}</p>
-	<p>Password: {{form.password}} (optional)</p>
-	<p>Expires in: {{form.max_downloads}} or {{form.expire_duration}}</p> -->
 	{% csrf_token %}
 	<p><input type="submit" value="Upload"></p>
 </form>

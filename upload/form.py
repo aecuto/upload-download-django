@@ -1,8 +1,9 @@
 from django import forms
 from .models import Upload
+from .form_validator import filesize_validate
 
 class UploadForm(forms.ModelForm):
-    file = forms.FileField()
+    file = forms.FileField(validators=[filesize_validate])
     max_downloads = forms.ChoiceField(
         choices=[
             (1, "1 download"),

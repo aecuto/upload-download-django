@@ -2,9 +2,7 @@ import os
 from time import time
 
 def handle_uploaded_file(f):
-
     file_name = str(time()) +'.'+ f.name.split(".")[1]
-
     upload_path = os.path.join('files', file_name)
 
     if not os.path.exists(os.path.dirname(upload_path)):
@@ -19,11 +17,3 @@ def handle_uploaded_file(f):
 def handle_delete_file(path):
    if os.path.isfile(path):
        os.remove(path)
-
-def validate_file_size(file):
-    filesize = file.size
-    # 100MB - 104857600
-    if filesize > 104857600:
-        return True
-    else:
-        return False

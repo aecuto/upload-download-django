@@ -18,6 +18,7 @@
 <table>
     <thead>
         <tr>
+            <th>No.</th>
             <th>file name</th>
             <th>downloaded</th>
             <th>expire in</th>
@@ -28,6 +29,7 @@
     <tbody>
         {% for upload in object_list %}
         <tr>
+            <td>{{ forloop.counter }}</td>
             <td>{{ upload.file_name }}</td>
             <td>{{upload.download_set.count}}/{{ upload.max_downloads }}</td>
             <td>{{ upload.expire_date|date:'Y-m-d H:i' }}</td>
