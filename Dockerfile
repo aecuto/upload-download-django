@@ -12,7 +12,10 @@ RUN poetry install --no-dev --no-interaction \
 
 RUN mkdir files && chown 1000:1000 files
 RUN mkdir database && chown 1000:1000 database
+RUN chmod +x entrypoint.sh
 
 USER 1000
 
-CMD ["gunicorn", "--access-logfile", "-", "--error-logfile", "-", "-b", "0.0.0.0:8080", "-t", "300", "--threads", "16", "send.wsgi:application"]
+# CMD ["gunicorn", "--access-logfile", "-", "--error-logfile", "-", "-b", "0.0.0.0:8080", "-t", "300", "--threads", "16", "send.wsgi:application"]
+
+ENTRYPOINT ["./entrypoint.sh"]
