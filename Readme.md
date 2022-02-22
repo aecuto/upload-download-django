@@ -1,4 +1,4 @@
-# Upload & Download file lmwn test
+# Upload & Download file
  - user register/login/logout
  - upload file (auth)
  - download file (with link)
